@@ -6,7 +6,7 @@
     {"src":"/images/android-chrome-512x512.png","sizes":"512x512","type":"image/png"}
   ],
   "start_url": "/index.html",
-  "display": "fullscreen",
+  "display": "standalone",
   "theme_color": "#38bdf8",
   "background_color": "#0f172a"
 }
