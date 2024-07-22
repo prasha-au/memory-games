@@ -4,8 +4,8 @@
   <title>Memory Games</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="manifest" href="site.webmanifest" />
   <script src="https://cdn.tailwindcss.com"></script>
 
 </head>
@@ -19,8 +19,27 @@
   import { html, render, useState, useEffect } from 'https://esm.sh/htm/preact/standalone'
 
 
-  function DotwCalc() {
+  const APP_SECTIONS = {
+    'home': 'Home',
+    'dotw': 'Day of the Week',
+  };
 
+
+  function Home() {
+    return html`<div class="flex flex-col items-center px-6">
+      <ul class="max-w-screen-xl w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        ${Object.entries(APP_SECTIONS).slice(1).map(([key, label]) => html`
+          <li
+            class="w-full px-6 py-4 border-b border-gray-200 dark:border-gray-600 text-xl"
+            onClick=${() => window.location.hash = key}
+          >${label}</li>
+        `)}
+      </ul>
+    </div>`;
+  }
+
+
+  function Dotw() {
     function generateRandomDate() {
       return new Date(1700 + Math.floor(Math.random() * 500), Math.floor(Math.random() * 12), Math.floor(Math.random() * 31));
     }
@@ -42,11 +61,10 @@
     }, []);
 
 
-    return html`
-    <div class="flex">
+    return html`<div class="flex">
       <div class="text-center mx-auto">
         <div class="text-white text-4xl mb-4">${formatDate(randomDate)}</div>
-        <div class="text-white" style=${{ opacity: showAnswer ? 1 : 0 }}>${formatAnswer(randomDate)}</div>
+        <div class="text-white ${!showAnswer ? 'invisible' : ''}">${formatAnswer(randomDate)}</div>
         <br />
         <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 mb-2 rounded" onClick=${() => {
           setShowAnswer(!showAnswer);
@@ -56,17 +74,64 @@
           setShowAnswer(false);
           setRandomDate(generateRandomDate());
         }}>New Date</button>
-
       </div>
-    </div>
-    `;
+    </div>`;
   }
 
 
   function App() {
+    const [showNavBar, setShowNavBar] = useState(false);
+    const [activeSection, setActiveSection] = useState('home');
+
+    useEffect(() => {
+      const changeHandler = () => setActiveSection(window.location.hash.slice(1));
+      window.addEventListener('hashchange', changeHandler);
+      changeHandler();
+      return () => window.removeEventListener('hashchange', changeHandler);
+    }, []);
+
+
     return html`
-    <h1 class="text-3xl font-bold underline text-white mt-6 mb-8 text-center">Memory Games</h1>
-    <${DotwCalc} />
+      <nav class="bg-white border-gray-200 dark:bg-gray-900 mb-8">
+        <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+          <span class="flex items-center space-x-3 rtl:space-x-reverse">
+            <img src="images/header_logo.png" class="h-8" alt="Flowbite Logo" />
+            <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Memory Games</span>
+          </span>
+          <button
+            type="button"
+            class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-default" aria-expanded="false"
+            onClick=${() => setShowNavBar(!showNavBar)}
+          >
+            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/></svg>
+          </button>
+          <div class="${!showNavBar ? 'hidden' : ''} w-full md:block md:w-auto" id="navbar-default">
+            <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+              ${Object.entries(APP_SECTIONS).map(([key, label]) => html`
+                <li>
+                  <a href="#${key}" onClick=${() => setShowNavBar(false)}
+                    class="${activeSection === key
+                      ? 'block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500'
+                      : 'block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent'
+                    }"
+                  >${label}</a>
+                </li>
+              `)}
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      ${(() => {
+        switch (activeSection) {
+          case 'dotw':
+            return html`<${Dotw} />`;
+          case 'home':
+          case '':
+          default:
+            return html`<${Home} />`;
+        }
+      })()}
     `;
   }
 
