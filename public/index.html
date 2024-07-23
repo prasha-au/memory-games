@@ -34,7 +34,26 @@
     }
 
     function formatAnswer(date) {
-      return `${date.getDay()} ${date.toLocaleString('default', { weekday: 'long' })}`;
+
+      const fullYear = date.getFullYear();
+      const yearSuffixValue = fullYear % 100 % 28;
+      const yearSuffixAdd = Math.floor(yearSuffixValue / 4);
+      const yearPrefix = [6, 4, 2, 0][Math.floor(fullYear / 100) % 4];
+
+      const month = [0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5][date.getMonth()];
+      const needsLeapYearAdjust = fullYear % 4 === 0 && (fullYear % 400 === 0 || fullYear % 100 !== 0) && date.getMonth() < 2;
+
+      return html`<div>
+        <div class="font-mono my-4">
+          <span class="text-gray-400">##</span>${fullYear.toString().slice(-2)} = ${yearSuffixValue} + ${yearSuffixAdd} = ${yearSuffixValue + yearSuffixAdd} % 7 = ${(yearSuffixValue + yearSuffixAdd) % 7}<br />
+          ${fullYear.toString().slice(0, 2)}<span class="text-gray-400">##</span> = ${yearPrefix}<br />
+          ${date.toLocaleString('default', { month: 'short' })} = ${month}${needsLeapYearAdjust ? ` - 1 = ${(month) - 1}` : ''}<br />
+          ${date.getDate()} % 7 = ${date.getDate() % 7}
+        </div>
+        <div class="text-xl">
+          ${date.getDay()} ${date.toLocaleString('default', { weekday: 'long' })}
+        </div>
+      </div>`;
     }
 
     const [randomDate, setRandomDate] = useState(new Date());
@@ -70,10 +89,8 @@
     return html`<div class="px-8">
       <textarea
         inputmode="numeric"
-        style=${{
-          fontFamily: 'monospace',
-        }}
         rows="6"
+        autofocus
         onInput=${(e) => {
           const inputValue = e.target.value;
           if (inputValue.match(/\d{3}$/)) {
@@ -83,7 +100,7 @@
           }
         }}
         value=${value}
-        class="block w-full text-2xl p-2.5 text-gray-900 rounded-lg border border-gray-300 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:outline-none ${textBg}"
+        class="block w-full text-2xl font-mono p-2.5 text-gray-900 rounded-lg border border-gray-300 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:outline-none ${textBg}"
       >
       </textarea>
     </div>`;
