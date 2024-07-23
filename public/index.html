@@ -83,13 +83,14 @@
     const STRING_PI = '1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679';
 
     const [value, setValue] = useState('');
+    const [showErrors, setShowErrors] = useState(false);
 
-    const textBg = STRING_PI.startsWith(value.replace(/\s/g, '')) ? 'bg-gray-50 dark:bg-gray-700' : 'bg-red-900 dark:bg-red-900';
+    const textBg = STRING_PI.startsWith(value.replace(/\s/g, '')) || !showErrors ? 'bg-gray-50 dark:bg-gray-700' : 'bg-red-900 dark:bg-red-900';
 
     return html`<div class="px-8">
       <textarea
         inputmode="numeric"
-        rows="6"
+        rows="5"
         autofocus
         onInput=${(e) => {
           const inputValue = e.target.value;
@@ -103,6 +104,13 @@
         class="block w-full text-2xl font-mono p-2.5 text-gray-900 rounded-lg border border-gray-300 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:outline-none ${textBg}"
       >
       </textarea>
+      <div class="mx-auto mt-6 text-center">
+        <label class="inline-flex items-center cursor-pointer">
+          <input type="checkbox" value="" class="sr-only peer" checked=${showErrors} onChange=${() => setShowErrors(!showErrors)}/>
+          <div class="relative w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-800"></div>
+          <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Show errors</span>
+        </label>
+      </div>
     </div>`;
   }
 
