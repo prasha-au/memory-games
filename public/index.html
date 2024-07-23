@@ -12,32 +12,17 @@
 
 <body class="text-white dark:bg-slate-800 dark:text-black">
 
-  <div id="root"></div>
+<div id="root"></div>
 
 
 <script type="module">
   import { html, render, useState, useEffect } from 'https://esm.sh/htm/preact/standalone'
 
-
   const APP_SECTIONS = {
     'home': 'Home',
     'dotw': 'Day of the Week',
+    'pi': 'Pi',
   };
-
-
-  function Home() {
-    return html`<div class="flex flex-col items-center px-6">
-      <ul class="max-w-screen-xl w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-        ${Object.entries(APP_SECTIONS).slice(1).map(([key, label]) => html`
-          <li
-            class="w-full px-6 py-4 border-b border-gray-200 dark:border-gray-600 text-xl"
-            onClick=${() => window.location.hash = key}
-          >${label}</li>
-        `)}
-      </ul>
-    </div>`;
-  }
-
 
   function Dotw() {
     function generateRandomDate() {
@@ -63,7 +48,7 @@
 
     return html`<div class="flex">
       <div class="text-center mx-auto">
-        <div class="text-white text-4xl mb-4">${formatDate(randomDate)}</div>
+        <div class="text-white text-5xl mb-4">${formatDate(randomDate)}</div>
         <div class="text-white ${!showAnswer ? 'invisible' : ''}">${formatAnswer(randomDate)}</div>
         <br />
         <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 mb-2 rounded" onClick=${() => {
@@ -78,6 +63,48 @@
     </div>`;
   }
 
+  function Pi() {
+    const STRING_PI = '1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679';
+
+    const [value, setValue] = useState('');
+
+    const textBg = STRING_PI.startsWith(value.replace(/\s/g, '')) ? 'bg-gray-50 dark:bg-gray-700' : 'bg-red-900 dark:bg-red-900';
+
+    return html`<div class="px-8">
+      <textarea
+        inputmode="numeric"
+        style=${{
+          fontFamily: 'monospace',
+        }}
+        rows="6"
+        onInput=${(e) => {
+          const inputValue = e.target.value;
+          if (inputValue.match(/\d{3}$/)) {
+            setValue(inputValue.slice(0, -1) + ' ' + inputValue.slice(-1));
+          } else {
+            setValue(inputValue.trim());
+          }
+        }}
+        value=${value}
+        class="block w-full text-2xl p-2.5 text-gray-900 rounded-lg border border-gray-300  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:outline-none ${textBg}"
+      >
+      </textarea>
+    </div>`;
+  }
+
+
+  function Home() {
+    return html`<div class="flex flex-col items-center px-6">
+      <ul class="max-w-screen-xl w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        ${Object.entries(APP_SECTIONS).slice(1).map(([key, label]) => html`
+          <li
+            class="w-full px-6 py-4 border-b border-gray-200 dark:border-gray-600 text-xl"
+            onClick=${() => window.location.hash = key}
+          >${label}</li>
+        `)}
+      </ul>
+    </div>`;
+  }
 
   function App() {
     const [showNavBar, setShowNavBar] = useState(false);
@@ -126,6 +153,8 @@
         switch (activeSection) {
           case 'dotw':
             return html`<${Dotw} />`;
+          case 'pi':
+            return html`<${Pi} />`;
           case 'home':
           case '':
           default:
