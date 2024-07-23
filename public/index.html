@@ -37,7 +37,6 @@
       return `${date.getDay()} ${date.toLocaleString('default', { weekday: 'long' })}`;
     }
 
-
     const [randomDate, setRandomDate] = useState(new Date());
     const [showAnswer, setShowAnswer] = useState(false);
 
@@ -49,13 +48,11 @@
     return html`<div class="flex">
       <div class="text-center mx-auto">
         <div class="text-white text-5xl mb-4">${formatDate(randomDate)}</div>
-        <div class="text-white ${!showAnswer ? 'invisible' : ''}">${formatAnswer(randomDate)}</div>
-        <br />
-        <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 mb-2 rounded" onClick=${() => {
+        <div class="my-8 text-white ${!showAnswer ? 'invisible' : ''}">${formatAnswer(randomDate)}</div>
+        <button class="block mx-auto my-3 bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 mb-2 rounded" onClick=${() => {
           setShowAnswer(!showAnswer);
         }}>Show Answer</button>
-        <br />
-        <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded" onClick=${() => {
+        <button class="block mx-auto my-3 bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded" onClick=${() => {
           setShowAnswer(false);
           setRandomDate(generateRandomDate());
         }}>New Date</button>
@@ -86,7 +83,7 @@
           }
         }}
         value=${value}
-        class="block w-full text-2xl p-2.5 text-gray-900 rounded-lg border border-gray-300  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:outline-none ${textBg}"
+        class="block w-full text-2xl p-2.5 text-gray-900 rounded-lg border border-gray-300 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:outline-none ${textBg}"
       >
       </textarea>
     </div>`;
